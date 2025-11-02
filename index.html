@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIFT Jodhpur Mess</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f8f6;
+            /* A soft, warm off-white, inspired by the design */
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Custom scrollbar for the POP-UP menu */
+        #menuContent::-webkit-scrollbar,
+        #todayOnlyMenuContent::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #menuContent::-webkit-scrollbar-track,
+        #todayOnlyMenuContent::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        #menuContent::-webkit-scrollbar-thumb,
+        #todayOnlyMenuContent::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+
+        #menuContent::-webkit-scrollbar-thumb:hover,
+        #todayOnlyMenuContent::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-4 bg-gray-100">
+
+    <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 shadow-2xl rounded-2xl overflow-hidden"
+        style="min-height: 80vh;">
+
+        <!-- Left Column (Dark) -->
+        <div class="bg-gray-900 text-white p-8 lg:p-12 flex flex-col justify-between relative">
+            <div>
+                <div class="flex justify-between items-center">
+                    <h1 class="text-4xl font-bold mb-2">NIFT Jodhpur Mess</h1>
+                    <!-- Mobile Hamburger Menu Button -->
+                    <div class="lg:hidden">
+                        <button id="mobileMenuButton" class="text-white p-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16m-7 6h7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-xl text-gray-300 mb-2">Run by SDAC & Students</p>
+                <p class="text-sm text-yellow-400 opacity-75 mb-6">Website Under Development</p>
+                <!-- Live Date & Time -->
+                <div id="liveTime" class="text-lg text-teal-300 opacity-90 mb-6">
+                    <p id="dateDisplay">Loading date...</p>
+                    <p id="timeDisplay" class="font-medium">Loading time...</p>
+                </div>
+            </div>
+            <!-- Placeholder for food image -->
+            <div class="flex-grow flex items-center justify-center py-8">
+                <img id="mainFoodImage"
+                    src="https://placehold.co/400x400/111827/FFFFFF?text=NIFT+Mess&font=poppins"
+                    alt="Mess Food Placeholder"
+                    class="rounded-full shadow-lg w-[250px] h-[250px] md:w-[350px] md:h-[350px] object-cover transition-all duration-500">
+            </div>
+            <!-- Developer Credit -->
+            <div class="absolute bottom-8 left-8 text-gray-500 text-xs opacity-75">
+                Yasar C H BFT-27
+            </div>
+        </div>
+
+        <!-- Right Column (Light) -->
+        <div class="bg-white p-8 lg:p-12 flex flex-col">
+            <div id="messStatus" class="flex-grow">
+                <!-- Dynamic content will be injected here -->
+                <div id="loadingSpinner"
+                    class="text-center text-gray-500 flex flex-col items-center justify-center h-full">
+                    <svg class="animate-spin h-8 w-8 text-teal-600 mx-auto" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    <p class="mt-2 text-lg">Loading mess status...</p>
+                </div>
+            </div>
+
+            <!-- Full Menu Button (Desktop) - Removed as requested -->
+            <!--
+            <div class="mt-8 pt-6 border-t border-gray-200 hidden lg:block">
+                ...
+            </div>
+            -->
+        </div>
+
+    </div>
+
+    <!-- Full Week Menu Modal -->
+    <div id="menuModal"
+        class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-6 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Full Week Menu</h2>
+                <button id="closeMenuButton"
+                    class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <!-- Modal Content (Scrollable) -->
+            <div id="menuContent" class="p-6 overflow-y-auto">
+                <!-- Today's Menu Section -->
+                <div id="todayMenuSection" class="mb-8">
+                    <h3 class="text-xl font-bold text-teal-700 border-b-2 border-teal-200 pb-2 mb-4">Today's Menu</h3>
+                    <div id="todayMenuContent">
+                        <!-- Today's menu will be dynamically injected here -->
+                    </div>
+                </div>
+
+                <!-- Full Week Menu Section -->
+                <h3 class="text-xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4">Full Week</h3>
+                <div id="fullWeekMenuContent">
+                    <!-- Full week menu will be dynamically generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Menu Modal (NEW) -->
+    <div id="todayMenuModal"
+        class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-6 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Today's Menu</h2>
+                <button id="closeTodayMenuButton"
+                    class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <!-- Modal Content (Scrollable) -->
+            <div id="todayOnlyMenuContent" class="p-6 overflow-y-auto">
+                <!-- Today's menu will be dynamically generated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu (Hidden by default) -->
+    <div id="mobileMenu" class="fixed inset-0 bg-gray-900 text-white p-8 z-40 hidden lg:hidden">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-2xl font-bold">Menu</h2>
+            <button id="closeMobileMenuButton" class="text-white p-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <nav>
+            <button id="openTodayMenuButton"
+                class="w-full bg-teal-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-teal-700 transition-colors duration-300 mb-4">
+                View Today's Menu
+            </button>
+            <button id="openMenuButtonMobile"
+                class="w-full bg-gray-700 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-300 mb-4">
+                View Full Week Menu
+            </button>
+        </nav>
+    </div>
+
+
+    <script>
+        // --- MESS MENU DATA (Full Menu) ---
+        // Calorie data is an estimate (~).
+        // Added image property. Replace placeholders with your own image URLs.
+        const messMenu = {
+            "Monday": {
+                "Breakfast": [
+                    { name: 'Methi Thepla', calories: '~240 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Methi+Thepla' },
+                    { name: 'Curd', calories: '~100 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Curd' },
+                    { name: 'Pickle', calories: '~20 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Pickle' },
+                    { name: 'Apple & Banana', calories: '~150 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Fruit' },
+                    { name: 'Sprouts', calories: '~100 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Sprouts' },
+                    { name: 'Bread, Butter, Jam', calories: '~260 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Bread' },
+                    { name: 'Corn Flakes & Milk', calories: '~250 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Corn+Flakes' },
+                    { name: 'Boiled Egg & Omelette', calories: '~160 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Omelette' }
+                ],
+                "Lunch": [
+                    { name: 'Mix Veg', calories: '~180 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Mix+Veg' },
+                    { name: 'Aloo Chole', calories: '~350 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Aloo+Chole' },
+                    { name: 'Dal Fry', calories: '~200 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Dal+Fry' },
+                    { name: 'Jeera Rice', calories: '~250 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Jeera+Rice' },
+                    { name: 'Chapati', calories: '~160 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Chapati' },
+                    { name: 'Buttermilk, Salad, Papad', calories: '~130 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Salad' }
+                ],
+                "Snacks": [
+                    { name: 'Misal Pav', calories: '~450 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Misal+Pav' },
+                    { name: 'Pineapple / Chikoo', calories: '~100 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Fruit' },
+                    { name: 'Tea, Coffee', calories: '~30 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Tea' }
+                ],
+                "Dinner": [
+                    { name: 'Tomato Sabji', calories: '~150 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Tomato+Sabji' },
+                    { name: 'Butter/Afghani Chicken', calories: '~450 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Chicken' },
+                    { name: 'Paneer Lababdar', calories: '~400 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Paneer' },
+                    { name: 'Masoor Dal', calories: '~220 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Dal' },
+                    { name: 'Rasmalai / Moong Dal Sheera', calories: '~300 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Dessert' },
+                    { name: 'Rice & Chapati', calories: '~260 kcal', image: 'https://placehold.co/100x100/FFF0DB/333333?text=Rice' }
+                ]
+            },
+            "Tuesday": {
+                "Breakfast": [
+                    { name: 'Tomato Onion Uttapam', calories: '~300 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Uttapam' },
+                    { name: 'Red & Coconut Chutney', calories: '~100 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Chutney' },
+                    { name: 'Sambar', calories: '~150 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Sambar' },
+                    { name: 'Apple & Banana', calories: '~150 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Fruit' },
+                    { name: 'Sprouts', calories: '~100 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Sprouts' },
+                    { name: 'Bread, Butter, Jam', calories: '~260 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Bread' },
+                    { name: 'Corn Flakes & Milk', calories: '~250 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Corn+Flakes' }
+                ],
+                "Lunch": [
+                    { name: 'Gajar Matar', calories: '~180 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Gajar+Matar' },
+                    { name: 'Baingan Gravy', calories: '~200 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Baingan' },
+                    { name: 'Mix Dal', calories: '~220 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Mix+Dal' },
+                    { name: 'Dahi', calories: '~100 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Dahi' },
+                    { name: 'Palak Rice', calories: '~280 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Palak+Rice' },
+                    { name: 'Chapati', calories: '~160 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Chapati' },
+                    { name: 'Buttermilk, Salad, Papad', calories: '~130 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Salad' }
+                ],
+                "Snacks": [
+                    { name: 'Parippu(dal) Vada', calories: '~250 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Vada' },
+                    { name: 'Papaya', calories: '~80 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Papaya' },
+                    { name: 'Tea, Coffee', calories: '~30 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Tea' }
+                ],
+                "Dinner": [
+                    { name: 'Cauliflower Sabji', calories: '~150 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Cauliflower' },
+                    { name: 'Dum Aloo', calories: '~300 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Dum+Aloo' },
+                    { name: 'Lasooni Dal', calories: '~230 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Lasooni+Dal' },
+                    { name: 'Payasam (Kheer)', calories: '~250 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Kheer' },
+                    { name: 'Beetroot Chutney', calories: '~60 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Chutney' },
+                    { name: 'Rice & Chapati', calories: '~260 kcal', image: 'https://placehold.co/100x100/D4F3E8/333333?text=Rice' }
+                ]
+            },
+            "Wednesday": {
+                "Breakfast": [
+                    { name: 'Kande Poha', calories: '~300 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Poha' },
+                    { name: 'Dahi, Lemon, Sev', calories: '~150 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Dahi' },
+                    { name: 'Apple & Banana', calories: '~150 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Fruit' },
+                    { name: 'Sprouts', calories: '~100 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Sprouts' },
+                    { name: 'Bread, Butter, Jam', calories: '~260 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Bread' },
+                    { name: 'Corn Flakes & Milk', calories: '~250 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Corn+Flakes' }
+                ],
+                "Lunch": [
+                    { name: 'Cabbage Thoran', calories: '~120 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Cabbage' },
+                    { name: 'Kadala(chana) Curry', calories: '~300 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Chana' },
+                    { name: 'Moong Dal', calories: '~200 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Moong+Dal' },
+                    { name: 'Curd Rice', calories: '~300 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Curd+Rice' },
+                    { name: 'Chapati', calories: '~160 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Chapati' },
+                    { name: 'Buttermilk, Salad, Papad', calories: '~130 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Salad' }
+                ],
+                "Snacks": [
+                    { name: 'Ragda Pani Puri', calories: '~350 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Pani+Puri' },
+                    { name: 'Guava/Muskmelon', calories: '~80 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Guava' },
+                    { name: 'Tea, Coffee', calories: '~30 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Tea' }
+                ],
+                "Dinner": [
+                    { name: 'Paneer Butter Masala', calories: '~400 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Paneer' },
+                    { name: 'Fried Egg Curry', calories: '~250 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Egg+Curry' },
+                    { name: 'Gwar Fali Tamatar', calories: '~150 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Gwar+Fali' },
+                    { name: 'Dal Palak', calories: '~220 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Dal+Palak' },
+                    { name: 'Gajar Halwa / Ice Cream', calories: '~300 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Dessert' },
+                    { name: 'Rice & Chapati', calories: '~260 kcal', image: 'https://placehold.co/100x100/E0E7FF/333333?text=Rice' }
+                ]
+            },
+            "Thursday": {
+                "Breakfast": [
+                    { name: 'Pongal OR Besan Chilla', calories: '~300 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Pongal' },
+                    { name: 'Dahi, Pudina Chutney', calories: '~150 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Dahi' },
+                    { name: 'Apple & Banana', calories: '~150 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Fruit' },
+                    { name: 'Sprouts', calories: '~100 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Sprouts' },
+                    { name: 'Bread, Butter, Jam', calories: '~260 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Bread' },
+                    { name: 'Corn Flakes & Milk', calories: '~250 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Corn+Flakes' }
+                ],
+                "Lunch": [
+                    { name: 'Shimla Tamatar', calories: '~150 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Shimla+Tamatar' },
+                    { name: 'Rajma', calories: '~350 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Rajma' },
+                    { name: 'Green Moong Dal', calories: '~200 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Moong+Dal' },
+                    { name: 'Boondi Raita', calories: '~120 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Raita' },
+                    { name: 'Rice & Chapati', calories: '~260 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Rice' },
+                    { name: 'Salad, Papad, Pickle', calories: '~80 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Salad' }
+                ],
+                "Snacks": [
+                    { name: 'Pav Bhaji', calories: '~450 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Pav+Bhaji' },
+                    { name: 'Pomegranate', calories: '~100 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Pomegranate' },
+                    { name: 'Tea, Coffee', calories: '~30 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Tea' }
+                ],
+                "Dinner": [
+                    { name: 'Palak Sabji', calories: '~180 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Palak' },
+                    { name: 'Aloo Dry', calories: '~200 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Aloo+Dry' },
+                    { name: 'Black Urad Dal', calories: '~250 kcal', image: 'https://placehold.co/100x100/FFFBEB/33333V?text=Black+Urad' },
+                    { name: 'Fried Onion Rice', calories: '~280 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Fried+Rice' },
+                    { name: 'Shrikhand', calories: '~200 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Shrikhand' },
+                    { name: 'Rice & Chapati', calories: '~260 kcal', image: 'https://placehold.co/100x100/FFFBEB/333333?text=Rice' }
+                ]
+            },
+            "Friday": {
+                "Breakfast": [
+                    { name: 'Vegetable Sevaiya', calories: '~250 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Sevaiya' },
+                    { name: 'Apple & Banana', calories: '~150 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Fruit' },
+                    { name: 'Sprouts', calories: '~100 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Sprouts' },
+                    { name: 'Bread, Butter, Jam', calories: '~260 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Bread' },
+                    { name: 'Corn Flakes & Milk', calories: '~250 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Corn+Flakes' }
+                ],
+                "Lunch": [
+                    { name: 'Crispy Potato Fry', calories: '~250 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Potato+Fry' },
+                    { name: 'Kadhi (Gujarati)', calories: '~200 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Kadhi' },
+                    { name: 'Matki Dal', calories: '~220 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Matki+Dal' },
+                    { name: 'Soup', calories: '~100 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Soup' },
+                    { name: 'Rice & Chapati', calories: '~260 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Rice' },
+                    { name: 'Salad, Papad, Pickle', calories: '~80 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Salad' }
+                ],
+                "Snacks": [
+                    { name: 'Bread Pakoda', calories: '~300 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Bread+Pakoda' },
+                    { name: 'Orange / Mosambi', calories: '~80 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Orange' },
+                    { name: 'Tea, Coffee', calories: '~30 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Tea' }
+                ],
+                "Dinner": [
+                    { name: 'Kofta', calories: '~300 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Kofta' },
+                    { name: 'Chicken Biryani', calories: '~500 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Chicken+Biryani' },
+                    { name: 'Veg Paneer Biryani', calories: '~450 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Veg+Biryani' },
+                    { name: 'Dal Makhni', calories: '~350 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Dal+Makhni' },
+                    { name: 'Raita', calories: '~100 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Raita' },
+                    { name: 'Rasgulla', calories: '~150 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Rasgulla' },
+                    { name: 'Chapati', calories: '~160 kcal', image: 'https://placehold.co/100x100/F0F9FF/333333?text=Chapati' }
+                ]
+            },
+            "Saturday": {
+                "Breakfast": [
+                    { name: 'Aloo Pyaz Paratha', calories: '~350 kcal', image: 'https://i.imgur.com/gYfTqWk.jpeg' }, // Real Image
+                    { name: 'Dahi, Pickle', calories: '~120 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Dahi' },
+                    { name: 'Apple & Banana', calories: '~150 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Fruit' },
+                    { name: 'Sprouts', calories: '~100 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Sprouts' },
+                    { name: 'Bread, Butter, Jam', calories: '~260 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Bread' },
+                    { name: 'Corn Flakes & Milk', calories: '~250 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Corn+Flakes' }
+                ],
+                "Lunch": [
+                    { name: 'Bhindi', calories: '~150 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Bhindi' },
+                    { name: 'Methi Matar Malai', calories: '~300 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Methi+Matar' },
+                    { name: 'Dal (Varan)', calories: '~200 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Dal' },
+                    { name: 'Koshimbir', calories: '~80 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Koshimbir' },
+                    { name: 'Rice & Chapati', calories: '~260 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Rice' },
+                    { name: 'Salad, Papad, Pickle', calories: '~80 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Salad' }
+                ],
+                "Snacks": [
+                    { name: 'Khaman', calories: '~200 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Khaman' },
+                    { name: 'Pear / Grapes', calories: '~100 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Pear' },
+                    { name: 'Tea, Coffee', calories: '~30 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Tea' }
+                ],
+                "Dinner": [
+                    { name: 'Dal Baati', calories: '~500 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Dal+Baati' },
+                    { name: 'Methi Lasooni', calories: '~150 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Methi' },
+                    { name: 'Masala Bhaat', calories: '~280 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Masala+Bhaat' },
+                    { name: 'Raita', calories: '~100 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Raita' },
+                    { name: 'Lasoon Chutney', calories: '~60 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Chutney' },
+                    { name: 'Fruit Custard', calories: '~200 kcal', image: 'https://placehold.co/100x100/FDF2F8/333333?text=Custard' }
+                ]
+            },
+            "Sunday": {
+                "Breakfast": [
+                    { name: 'Vegetable Upma', calories: '~280 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Upma' },
+                    { name: 'Coconut Chutney, Sev', calories: '~120 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Chutney' },
+                    { name: 'Apple & Banana', calories: '~150 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Fruit' },
+                    { name: 'Sprouts', calories: '~100 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Sprouts' },
+                    { name: 'Bread, Butter, Jam', calories: '~260 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Bread' },
+                    { name: 'Corn Flakes & Milk', calories: '~250 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Corn+Flakes' }
+                ],
+                "Lunch": [
+                    { name: 'Drumstick(shevga)', calories: '~150 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Drumstick' },
+                    { name: 'Aloo Matar', calories: '~250 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Aloo+Matar' },
+                    { name: 'Urad Dal', calories: '~220 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Urad+Dal' },
+                    { name: 'Pudina Chaas', calories: '~50 kcal', image: 'httpsD://placehold.co/100x100/F3F4F6/333333?text=Chaas' },
+                    { name: 'Rice & Chapati', calories: '~260 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Rice' },
+                    { name: 'Salad, Papad, Pickle', calories: '~80 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Salad' }
+                ],
+                "Snacks": [
+                    { name: 'Sabudana Khichdi', calories: '~350 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Khichdi' },
+                    { name: 'Dahi, Sitafal', calories: '~180 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Sitafal' },
+                    { name: 'Tea, Coffee', calories: '~30 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Tea' }
+                ],
+                "Dinner": [
+                    { name: 'Paneer Kadai', calories: '~380 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Paneer+Kadai' },
+                    { name: 'Egg Biryani', calories: '~480 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Egg+Biryani' },
+                    { name: 'Mushroom Matar', calories: '~250 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Mushroom' },
+                    { name: 'Dal Tadka', calories: '~220 kcal', image: 'httpsD://placehold.co/100x100/F3F4F6/333333?text=Dal+Tadka' },
+                    { name: 'Gulab Jamun / Ice Cream', calories: '~300 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Dessert' },
+                    { name: 'Chapati', calories: '~160 kcal', image: 'https://placehold.co/100x100/F3F4F6/333333?text=Chapati' }
+                ]
+            }
+        };
+
+        // --- GLOBAL VARIABLES ---
+        let currentSwapInterval = null;
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        
+        // --- REAL MEAL TIMES ---
+        const realNow = new Date();
+        const currentDay = realNow.getDay(); // 0 = Sunday, 6 = Saturday
+
+        let breakfastTime, breakfastEndTime;
+        
+        // Check for Saturday (6) or Sunday (0)
+        if (currentDay === 0 || currentDay === 6) {
+            breakfastTime = new Date(realNow.getFullYear(), realNow.getMonth(), realNow.getDate(), 9, 0, 0); // 9:00 AM
+            breakfastEndTime = new Date(realNow.getFullYear(), realNow.getMonth(), realNow.getDate(), 10, 30, 0); // 10:30 AM
+        } else {
+            // Weekdays (Mon-Fri)
+            breakfastTime = new Date(realNow.getFullYear(), realNow.getMonth(), realNow.getDate(), 8, 0, 0); // 8:00 AM
+            breakfastEndTime = new Date(realNow.getFullYear(), realNow.getMonth(), realNow.getDate(), 10, 0, 0); // 10:00 AM
+        }
+
+        const lunchTime = new Date(realNow.getFullYear(), realNow.getMonth(), realNow.getDate(), 12, 0, 0); // 12:00 PM
+        const lunchEndTime = new Date(realNow.getFullYear(), realNow.getMonth(), realNow.getDate(), 14, 0, 0); // 2:00 PM
+        const snacksTime = new Date(realNow.getFullYear(), realNow.getMonth(), realNow.getDate(), 17, 0, 0); // 5:00 PM
+        const snacksEndTime = new Date(realNow.getFullYear(), realNow.getMonth(), realNow.getDate(), 18, 0, 0); // 6:00 PM
+        const dinnerTime = new Date(realNow.getFullYear(), realNow.getMonth(), realNow.getDate(), 20, 0, 0); // 8:00 PM
+        const dinnerEndTime = new Date(realNow.getFullYear(), realNow.getMonth(), realNow.getDate(), 22, 0, 0); // 10:00 PM
+
+        // --- Calculate Tomorrow's Breakfast Time ---
+        const tomorrow = new Date(realNow);
+        tomorrow.setDate(realNow.getDate() + 1);
+        const tomorrowDay = tomorrow.getDay();
+        
+        let tomorrowBreakfastTime;
+        // Check if tomorrow is Saturday (6) or Sunday (0)
+        if (tomorrowDay === 0 || tomorrowDay === 6) {
+            tomorrowBreakfastTime = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 9, 0, 0); // 9:00 AM
+        } else {
+            tomorrowBreakfastTime = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 8, 0, 0); // 8:00 AM
+        }
+
+
+        // --- UTILITY FUNCTIONS ---
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+
+        function formatTimeWithSeconds(date) {
+            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        /**
+         * Cleans known typos from a URL string.
+         * @param {string} url - The URL to clean.
+         * @returns {string} The cleaned URL.
+         */
+        function cleanImageUrl(url) {
+            if (typeof url !== 'string') return 'https://placehold.co/100x100/F3F4F6/333333?text=Invalid+URL';
+            return url.replace(/httpss|httpsC|httpsD/g, 'https')
+                      .replace('https://placehold.co/1D00x100/', 'https://placehold.co/100x100/')
+                      .replace('https://placehold.co/100x1An0/', 'https://placehold.co/100x100/')
+                      .replace('https://placehold.co/1A00x100/', 'https://placehold.co/100x100/')
+                      .replace('https://placehold.co/100x100/FFFBEB/33333V?text=Black+Urad', 'https://placehold.co/100x100/FFFBEB/333333?text=Black+Urad');
+        }
+
+        // --- MENU GENERATION FUNCTIONS ---
+
+        /**
+         * Generates HTML for a list of menu items.
+         * @param {Array} items - Array of meal item objects.
+         */
+        function getMenuHtml(items) {
+            if (!items || items.length === 0) {
+                return '<p class="text-gray-500">Menu not available.</p>';
+            }
+            return items.map(item => `
+                <li class="flex items-center justify-between py-3 border-b border-gray-100">
+                    <div class="flex items-center min-w-0">
+                        <img src="${cleanImageUrl(item.image)}" alt="${item.name}" class="w-12 h-12 rounded-lg object-cover mr-4 shadow-sm flex-shrink-0" onerror="this.src='https://placehold.co/100x100/F3F4F6/333333?text=Error'">
+                        <span class="text-gray-800 font-medium truncate" title="${item.name}">${item.name}</span>
+                    </div>
+                    <span class="text-gray-500 text-sm font-medium text-right flex-shrink-0 ml-4">${item.calories}</span>
+                </li>
+            `).join('');
+        }
+
+        /**
+         * Generates HTML for a single meal (Breakfast, Lunch, etc.).
+         * @param {String} mealName - The name of the meal.
+         * @param {Array} items - Array of meal item objects.
+         */
+        function getMealSectionHtml(mealName, items) {
+            return `
+                <div class="mb-6">
+                    <h4 class="text-lg font-semibold text-teal-600 mb-2">${mealName}</h4>
+                    <ul class="list-none m-0 p-0">
+                        ${getMenuHtml(items)}
+                    </ul>
+                </div>
+            `;
+        }
+        
+        /**
+         * Populates the "Today's Menu" (Only) section in the modal.
+         * @param {String} today - The current day string (e.g., "Monday").
+         */
+        function populateTodayOnlyMenu(today) {
+            const menu = messMenu[today];
+            const contentEl = document.getElementById('todayOnlyMenuContent');
+            if (!menu) {
+                contentEl.innerHTML = '<p class="text-gray-500">Today\'s menu is not available.</p>';
+                return;
+            }
+
+            contentEl.innerHTML = `
+                ${getMealSectionHtml('Breakfast', menu.Breakfast)}
+                ${getMealSectionHtml('Lunch', menu.Lunch)}
+                ${getMealSectionHtml('Snacks', menu.Snacks)}
+                ${getMealSectionHtml('Dinner', menu.Dinner)}
+            `;
+        }
+
+
+        /**
+         * Populates the "Today's Menu" section in the main (full week) modal.
+         * @param {String} today - The current day string (e.g., "Monday").
+         */
+        function populateTodayMenu(today) {
+            const menu = messMenu[today];
+            const contentEl = document.getElementById('todayMenuContent');
+            if (!menu) {
+                contentEl.innerHTML = '<p class="text-gray-500">Today\'s menu is not available.</p>';
+                return;
+            }
+
+            contentEl.innerHTML = `
+                ${getMealSectionHtml('Breakfast', menu.Breakfast)}
+                ${getMealSectionHtml('Lunch', menu.Lunch)}
+                ${getMealSectionHtml('Snacks', menu.Snacks)}
+                ${getMealSectionHtml('Dinner', menu.Dinner)}
+            `;
+        }
+
+        /**
+         * Populates the "Full Week Menu" section in the modal.
+         */
+        function populateFullWeekMenu() {
+            const contentEl = document.getElementById('fullWeekMenuContent');
+            contentEl.innerHTML = ''; // Clear previous content
+            days.forEach(day => {
+                const menu = messMenu[day];
+                if (menu) {
+                    contentEl.innerHTML += `
+                        <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">${day}</h3>
+                            ${getMealSectionHtml('Breakfast', menu.Breakfast)}
+                            ${getMealSectionHtml('Lunch', menu.Lunch)}
+                            ${getMealSectionHtml('Snacks', menu.Snacks)}
+                            ${getMealSectionHtml('Dinner', menu.Dinner)}
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        // --- UI UPDATE FUNCTIONS ---
+
+        /**
+         * Updates the main food image on the left panel.
+         * @param {Array} items - Array of meal item objects.
+         */
+        function updateMainImage(items) {
+            const mainImageEl = document.getElementById('mainFoodImage');
+            if (items && items.length > 0) {
+                const cleanImageSrc = cleanImageUrl(items[0].image);
+                mainImageEl.src = cleanImageSrc;
+                mainImageEl.alt = items[0].name;
+                mainImageEl.onerror = () => { mainImageEl.src = 'https://placehold.co/400x400/111827/FFFFFF?text=Image+Error&font=poppins'; };
+            } else {
+                mainImageEl.src = 'https://placehold.co/400x400/111827/FFFFFF?text=NIFT+Mess&font=poppins';
+                mainImageEl.alt = 'NIFT Mess Placeholder';
+            }
+        }
+
+        /**
+         * Displays the current meal being served.
+         * @param {String} meal - Name of the meal.
+         * @param {Array} items - Array of meal item objects.
+         * @param {String} nextMeal - Name of the next meal.
+         * @param {Array} nextItems - Array of next meal's item objects.
+         */
+        function showNowServing(meal, items, nextMeal, nextItems) {
+            const statusEl = document.getElementById('messStatus');
+            const nowSeconds = Math.floor(new Date().getTime() / 1000);
+            
+            // 5 minutes = 300 seconds. Show "Up Next" for the last 10 seconds of that cycle.
+            const cycleTime = 300; // 5 minutes
+            const showNextTime = 10; // 10 seconds
+            
+            const timeInCycle = nowSeconds % cycleTime;
+
+            if (nextItems && nextItems.length > 0 && timeInCycle >= (cycleTime - showNextTime)) {
+                // --- Show "Up Next" ---
+                updateMainImage(nextItems);
+                statusEl.innerHTML = `
+                    <h2 class="text-3xl font-bold text-amber-600 mb-1">Up Next: ${nextMeal}</h2>
+                    <p class="text-lg text-gray-500 mb-6">Coming up soon...</p>
+                    <ul class="list-none m-0 p-0">
+                        ${getMenuHtml(nextItems)}
+                    </ul>
+                `;
+            } else {
+                 // --- Show "Now Serving" ---
+                updateMainImage(items);
+                statusEl.innerHTML = `
+                    <h2 class="text-3xl font-bold text-teal-600 mb-1">Now Serving: ${meal}</h2>
+                    <p class="text-lg text-gray-500 mb-6">Enjoy your meal!</p>
+                    <ul class="list-none m-0 p-0">
+                        ${getMenuHtml(items)}
+                    </ul>
+                `;
+            }
+        }
+
+        /**
+         * Displays the countdown to the next meal.
+         * @param {String} meal - Name of the upcoming meal.
+         * @param {Date} mealTime - The Date object for the meal's start time.
+         * @param {Array} items - Array of the upcoming meal's item objects.
+         */
+        function showCountdown(meal, mealTime, items) {
+            if (currentSwapInterval) clearInterval(currentSwapInterval); // Clear any running swap interval
+            
+            const statusEl = document.getElementById('messStatus');
+            const now = new Date();
+            const diff = mealTime.getTime() - now.getTime();
+
+            if (diff <= 0) {
+                // updateMessStatus(); // Time has come, let the main loop handle it
+                return;
+            }
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            const timerString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            const showTimer = () => {
+                updateMainImage(items); // Show upcoming meal image
+                statusEl.innerHTML = `
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">${meal} will start in</h2>
+                    <p class="text-6xl font-bold text-teal-600 tabular-nums">${timerString}</p>
+                    <p class="text-lg text-gray-500 mt-2">at ${formatTime(mealTime)}</p>
+                `;
+            };
+
+            const showMenu = () => {
+                updateMainImage(items); // Keep upcoming meal image
+                statusEl.innerHTML = `
+                    <h2 class="text-3xl font-bold text-amber-600 mb-2">Up Next: ${meal}</h2>
+                    <p class="text-lg text-gray-500 mb-6">Menu for the upcoming meal:</p>
+                    <ul class="list-none m-0 p-0">
+                        ${getMenuHtml(items)}
+                    </ul>
+                `;
+            };
+
+            // Alternate between timer and menu
+            const secondsSinceEpoch = Math.floor(now.getTime() / 1000);
+            if (secondsSinceEpoch % 20 < 15) { // Show timer for 15s
+                showTimer();
+            } else { // Show menu for 5s
+                showMenu();
+            }
+        }
+
+        /**
+         * Displays a "meal is over" message.
+         * @param {String} meal - Name of the meal that just ended.
+         * @param {String} nextMeal - Name of the next meal.
+         * @param {Date} nextMealTime - The Date object for the next meal's start time.
+         * @param {Array} nextItems - Array of the next meal's item objects.
+         */
+        function showMealOver(meal, nextMeal, nextMealTime, nextItems) {
+            if (currentSwapInterval) clearInterval(currentSwapInterval);
+            showCountdown(nextMeal, nextMealTime, nextItems); // Show countdown to next meal
+        }
+
+        /**
+         * Displays a "welcome" or "mess closed" message.
+         * @param {String} nextMeal - Name of the next meal.
+         * @param {Date} nextMealTime - The Date object for the next meal's start time.
+         * @param {Array} nextItems - Array of the next meal's item objects.
+         */
+        function showWelcome(nextMeal, nextMealTime, nextItems) {
+            if (currentSwapInterval) clearInterval(currentSwapInterval); // Clear any running swap interval
+            
+            const statusEl = document.getElementById('messStatus');
+            updateMainImage(nextItems); // Show next meal's image
+
+            statusEl.innerHTML = `
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Welcome to the Mess!</h2>
+                <p class="text-xl text-gray-600 mb-8">NIFT Jodhpur</p>
+            `;
+            // Immediately start the countdown
+            showCountdown(nextMeal, nextMealTime, nextItems);
+        }
+
+        /**
+         * Main function to update the mess status based on the current time.
+         */
+        function updateMessStatus() {
+            try {
+                const now = new Date();
+                const day = days[now.getDay()];
+                const tomorrowDay = days[(now.getDay() + 1) % 7];
+                
+                // Check if menu for today exists
+                if (!messMenu[day]) {
+                    document.getElementById('messStatus').innerHTML = `<h2 class="text-2xl font-bold text-red-600">Error</h2><p class="text-lg text-gray-600">Menu data for ${day} is not available.</p>`;
+                    return;
+                }
+                const menu = messMenu[day];
+
+                // Check if menu for tomorrow exists
+                if (!messMenu[tomorrowDay]) {
+                    document.getElementById('messStatus').innerHTML = `<h2 class="text-2xl font-bold text-red-600">Error</h2><p class="text-lg text-gray-600">Menu data for ${tomorrowDay} is not available.</p>`;
+                    return;
+                }
+                const tomorrowMenu = messMenu[tomorrowDay];
+
+
+                // Update live time display
+                document.getElementById('dateDisplay').innerText = formatDate(now);
+                document.getElementById('timeDisplay').innerText = formatTimeWithSeconds(now);
+
+                // --- Main Time Logic ---
+                if (now < breakfastTime) {
+                    showWelcome('Breakfast 🍳', breakfastTime, menu.Breakfast);
+                } else if (now >= breakfastTime && now < breakfastEndTime) {
+                    showNowServing('Breakfast 🍳', menu.Breakfast, 'Lunch 🍛', menu.Lunch);
+                } else if (now >= breakfastEndTime && now < lunchTime) {
+                    showMealOver('Breakfast 🍳', 'Lunch 🍛', lunchTime, menu.Lunch);
+                } else if (now >= lunchTime && now < lunchEndTime) {
+                    showNowServing('Lunch 🍛', menu.Lunch, 'Snacks 🥪', menu.Snacks);
+                } else if (now >= lunchEndTime && now < snacksTime) {
+                    showMealOver('Lunch 🍛', 'Snacks 🥪', snacksTime, menu.Snacks);
+                } else if (now >= snacksTime && now < snacksEndTime) {
+                    showNowServing('Snacks 🥪', menu.Snacks, 'Dinner 🍲', menu.Dinner);
+                } else if (now >= snacksEndTime && now < dinnerTime) {
+                    showMealOver('Snacks 🥪', 'Dinner 🍲', dinnerTime, menu.Dinner);
+                } else if (now >= dinnerTime && now < dinnerEndTime) {
+                    showNowServing('Dinner 🍲', menu.Dinner, 'Tomorrow\'s Breakfast 🍳', tomorrowMenu.Breakfast);
+                } else {
+                    // After dinner
+                    showWelcome('Tomorrow\'s Breakfast 🍳', tomorrowBreakfastTime, tomorrowMenu.Breakfast);
+                }
+            } catch (error) {
+                console.error("Error in updateMessStatus:", error);
+                document.getElementById('messStatus').innerHTML = `<h2 class="text-2xl font-bold text-red-600">Script Error</h2><p class="text-lg text-gray-600">An error occurred. Please check the console.</p>`;
+            }
+        }
+
+        // --- INITIALIZATION ---
+        // We must wait for the DOM to be loaded before trying to find elements
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                // --- Get All Elements ---
+                const modal = document.getElementById('menuModal');
+                const openButtonMobile = document.getElementById('openMenuButtonMobile');
+                const closeButton = document.getElementById('closeMenuButton');
+                
+                const todayMenuModal = document.getElementById('todayMenuModal');
+                const openTodayMenuButton = document.getElementById('openTodayMenuButton');
+                const closeTodayMenuButton = document.getElementById('closeTodayMenuButton');
+
+                const mobileMenu = document.getElementById('mobileMenu');
+                const mobileMenuButton = document.getElementById('mobileMenuButton');
+                const closeMobileMenuButton = document.getElementById('closeMobileMenuButton');
+
+                const day = days[new Date().getDay()];
+
+                // --- Full Week Menu Modal Listeners ---
+                const openModal = () => {
+                    populateTodayMenu(day); // Populate today's menu
+                    populateFullWeekMenu(); // Populate the full week menu
+                    modal.classList.remove('hidden');
+                    mobileMenu.classList.add('hidden'); // Close mobile menu if open
+                };
+
+                const closeModal = () => {
+                    modal.classList.add('hidden');
+                };
+
+                openButtonMobile.addEventListener('click', openModal);
+                closeButton.addEventListener('click', closeModal);
+
+                // Close modal by clicking background
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
+                });
+
+                // --- Today's Menu Modal Listeners ---
+                const openTodayModal = () => {
+                    populateTodayOnlyMenu(day); // Populate today's menu
+                    todayMenuModal.classList.remove('hidden');
+                    mobileMenu.classList.add('hidden'); // Close mobile menu
+                };
+
+                const closeTodayModal = () => {
+                    todayMenuModal.classList.add('hidden');
+                };
+
+                openTodayMenuButton.addEventListener('click', openTodayModal);
+                closeTodayMenuButton.addEventListener('click', closeTodayModal);
+                
+                // Close modal by clicking background
+                todayMenuModal.addEventListener('click', (e) => {
+                    if (e.target === todayMenuModal) {
+                        closeTodayModal();
+                    }
+                });
+
+
+                // --- Mobile Menu Listeners ---
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.remove('hidden');
+_                });
+
+                closeMobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+
+
+                // --- Start the App ---
+                // Clean up any bad image URLs in the menu data first
+                for (const day of days) {
+                    if (messMenu[day]) {
+                        for (const meal of ['Breakfast', 'Lunch', 'Snacks', 'Dinner']) {
+                            if (messMenu[day][meal]) {
+                                messMenu[day][meal].forEach(item => {
+                                    item.image = cleanImageUrl(item.image);
+                                });
+                            }
+                        }
+                    }
+                }
+                
+                // Show loading spinner for 1 second, then start the main loop
+                setTimeout(() => {
+                    document.getElementById('loadingSpinner').classList.add('hidden');
+                    updateMessStatus(); // Run first time
+                    setInterval(updateMessStatus, 1000); // Update every second
+                }, 1000); // 1 second delay
+
+            } catch (error) {
+                console.error("Error during initialization:", error);
+                const statusEl = document.getElementById('messStatus');
+                if(statusEl) {
+                    statusEl.innerHTML = `<h2 class="text-2xl font-bold text-red-600">Initialization Error</h2><p class="text-lg text-gray-600">Please reload the page.</p>`;
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>
+
